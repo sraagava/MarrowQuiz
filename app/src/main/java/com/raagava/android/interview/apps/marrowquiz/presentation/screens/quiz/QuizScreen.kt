@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.raagava.android.interview.apps.marrowquiz.presentation.app.Screens
+import com.raagava.android.interview.apps.marrowquiz.presentation.components.ErrorView
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.QuestionSection
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.TopBar
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.CorrectColor
@@ -46,17 +48,31 @@ fun QuizScreen(
 
         when (val qState = questionsState) {
             is QuestionsUiState.Error -> {
-                Text(text = "Error")
+                ErrorView(
+                    title = "Couldn't load questions",
+                    description = qState.message,
+                    actionButton = {
+                        Button(onClick = { viewModel.getQuestions() }) {
+                            Text(text = "Retry")
+                        }
+                    }
+                )
             }
 
             QuestionsUiState.Loading -> {
-                Text(text = "Loading")
+                CircularProgressIndicator()
             }
 
             is QuestionsUiState.Success -> {
                 if (qState.questions.isEmpty()) {
-                    Text(
-                        text = "Empty questions"
+                    ErrorView(
+                        title = "Couldn't load questions",
+                        description = "There are no questions available at the moment",
+                        actionButton = {
+                            Button(onClick = { viewModel.getQuestions() }) {
+                                Text(text = "Retry")
+                            }
+                        }
                     )
                 } else {
                     LinearProgressIndicator(

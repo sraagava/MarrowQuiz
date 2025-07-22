@@ -2,7 +2,6 @@ package com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,106 +49,104 @@ fun ResultScreen(
     }
 
     val resultState = viewModel.resultState.collectAsState()
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-
-            TopBar(title = "Quiz Result")
-            LinearProgressIndicator(
-                progress = { 1f },
-                modifier = Modifier.fillMaxWidth(),
-                color = CorrectColor,
-                trackColor = MaterialTheme.colorScheme.secondary
-            )
-            resultState.value?.let { result ->
-                LazyVerticalGrid(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    columns = GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+        TopBar(title = "Quiz Result")
+        LinearProgressIndicator(
+            progress = { 1f },
+            modifier = Modifier.fillMaxWidth(),
+            color = CorrectColor,
+            trackColor = MaterialTheme.colorScheme.secondary
+        )
+        resultState.value?.let { result ->
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                item(
+                    span = { GridItemSpan(maxLineSpan) }
                 ) {
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Spacer(modifier = Modifier.height(30.dp))
-                            Text(
-                                text = "Congratulations!",
-                                fontSize = 26.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = "You have completed the quiz. Here's your performance summary.",
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-                    }
-                    item {
-                        StatCard(
-                            title = "Correct Answers",
-                            stat = "${result.correct}/${result.total}",
-                            modifier = Modifier
-                                .weight(1f)
-                                .background(CorrectOptionBg, RoundedCornerShape(8.dp))
+                        Spacer(modifier = Modifier.height(30.dp))
+                        Text(
+                            text = "Congratulations!",
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
-                    }
-                    item {
-                        StatCard(
-                            title = "Highest Streak",
-                            stat = "${result.highestStreak}",
-                            modifier = Modifier
-                                .weight(1f)
-                                .background(SelectedOptionBg, RoundedCornerShape(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "You have completed the quiz. Here's your performance summary.",
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Center
                         )
-                    }
-                    item {
-                        StatCard(
-                            title = "Incorrect Answers",
-                            stat = "${result.incorrect}",
-                            modifier = Modifier
-                                .weight(1f)
-                                .background(IncorrectOptionBg, RoundedCornerShape(8.dp))
-                        )
-                    }
-                    item {
-                        StatCard(
-                            title = "Skipped Questions",
-                            stat = "${result.skipped}",
-                            modifier = Modifier
-                                .weight(1f)
-                                .background(SkippedBg, RoundedCornerShape(8.dp))
-                        )
-                    }
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        Spacer(modifier = Modifier.height(40.dp))
-                    }
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        Button(onClick = {
-                            navController.navigate(Screens.QuestionsScreen)
-                        }) {
-                            Text(text = "Restart Quiz")
-                        }
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
                 }
-            } ?: run {
-                CircularProgressIndicator()
+                item {
+                    StatCard(
+                        title = "Correct Answers",
+                        stat = "${result.correct}/${result.total}",
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(CorrectOptionBg, RoundedCornerShape(8.dp))
+                    )
+                }
+                item {
+                    StatCard(
+                        title = "Highest Streak",
+                        stat = "${result.highestStreak}",
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(SelectedOptionBg, RoundedCornerShape(8.dp))
+                    )
+                }
+                item {
+                    StatCard(
+                        title = "Incorrect Answers",
+                        stat = "${result.incorrect}",
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(IncorrectOptionBg, RoundedCornerShape(8.dp))
+                    )
+                }
+                item {
+                    StatCard(
+                        title = "Skipped Questions",
+                        stat = "${result.skipped}",
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(SkippedBg, RoundedCornerShape(8.dp))
+                    )
+                }
+                item(
+                    span = { GridItemSpan(maxLineSpan) }
+                ) {
+                    Spacer(modifier = Modifier.height(40.dp))
+                }
+                item(
+                    span = { GridItemSpan(maxLineSpan) }
+                ) {
+                    Button(onClick = {
+                        navController.navigate(Screens.QuestionsScreen)
+                    }) {
+                        Text(text = "Restart Quiz")
+                    }
+                }
             }
+        } ?: run {
+            CircularProgressIndicator()
         }
     }
 }
