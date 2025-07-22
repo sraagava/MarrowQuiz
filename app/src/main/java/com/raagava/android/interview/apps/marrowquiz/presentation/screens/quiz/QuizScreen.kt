@@ -41,7 +41,6 @@ import com.raagava.android.interview.apps.marrowquiz.presentation.components.Top
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.QuestionsUiState
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.ResultUiState
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.CorrectColor
-import com.raagava.android.interview.apps.marrowquiz.ui.theme.PrimaryColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -130,7 +129,7 @@ fun QuizScreen(
                                 text = "Question ${index + 1} of ${qState.questions.size}",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = PrimaryColor
+                                color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(16.dp))
 

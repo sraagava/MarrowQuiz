@@ -66,7 +66,7 @@ fun OptionButton(
     val bgColor = when {
         isAnswer -> CorrectOptionBg
         !isAnswer && isSelected -> IncorrectOptionBg
-        else -> Color.White
+        else -> MaterialTheme.colorScheme.background
     }
     val checkIconColor = when {
         isAnswer -> CorrectColor
@@ -91,7 +91,7 @@ fun OptionButton(
                 onClick.invoke()
             }
             .border(
-                0.7.dp, Color.Black, RoundedCornerShape(8.dp)
+                0.7.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(8.dp)
             )
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
