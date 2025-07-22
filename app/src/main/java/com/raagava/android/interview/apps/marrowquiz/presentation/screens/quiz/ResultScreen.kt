@@ -2,6 +2,7 @@ package com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.raagava.android.interview.apps.marrowquiz.presentation.app.Screens
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.TopBar
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.CorrectColor
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.CorrectOptionBg
@@ -47,39 +51,51 @@ fun ResultScreen(
 
     val resultState = viewModel.resultState.collectAsState()
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        TopBar(title = "Quiz Result")
-        LinearProgressIndicator(
-            progress = { 1f },
-            modifier = Modifier.fillMaxWidth(),
-            color = CorrectColor,
-            trackColor = MaterialTheme.colorScheme.secondary
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(text = "Congratulations!", fontSize = 26.sp, fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "You have completed the quiz. Here's your performance summary.",
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            TopBar(title = "Quiz Result")
+            LinearProgressIndicator(
+                progress = { 1f },
+                modifier = Modifier.fillMaxWidth(),
+                color = CorrectColor,
+                trackColor = MaterialTheme.colorScheme.secondary
+            )
             resultState.value?.let { result ->
                 LazyVerticalGrid(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
                     columns = GridCells.Fixed(2),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
+                    item(
+                        span = { GridItemSpan(maxLineSpan) }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(modifier = Modifier.height(30.dp))
+                            Text(
+                                text = "Congratulations!",
+                                fontSize = 26.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "You have completed the quiz. Here's your performance summary.",
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                        }
+                    }
                     item {
                         StatCard(
                             title = "Correct Answers",
@@ -115,6 +131,20 @@ fun ResultScreen(
                                 .weight(1f)
                                 .background(SkippedBg, RoundedCornerShape(8.dp))
                         )
+                    }
+                    item(
+                        span = { GridItemSpan(maxLineSpan) }
+                    ) {
+                        Spacer(modifier = Modifier.height(40.dp))
+                    }
+                    item(
+                        span = { GridItemSpan(maxLineSpan) }
+                    ) {
+                        Button(onClick = {
+                            navController.navigate(Screens.QuestionsScreen)
+                        }) {
+                            Text(text = "Restart Quiz")
+                        }
                     }
                 }
             } ?: run {

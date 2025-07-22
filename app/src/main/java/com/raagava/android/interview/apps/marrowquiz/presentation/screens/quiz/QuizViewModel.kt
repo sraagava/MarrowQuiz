@@ -39,9 +39,9 @@ class QuizViewModel(
         getQuestions()
     }
 
-    fun registerAnswer(questionIndex: Int, optionIndex: Int) {
+    fun registerAnswer(questionId: Int, optionIndex: Int) {
         userAnswers.value = userAnswers.value.toMutableMap().apply {
-            put(questionIndex, optionIndex)
+            put(questionId, optionIndex)
         }
     }
 

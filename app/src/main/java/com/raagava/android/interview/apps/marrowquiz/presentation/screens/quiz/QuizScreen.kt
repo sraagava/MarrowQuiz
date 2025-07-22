@@ -79,12 +79,13 @@ fun QuizScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        val selectedOption = userAnswers.getOrDefault(currIndex, null)
+                        val selectedOption =
+                            userAnswers.getOrDefault(qState.questions[currIndex].id, null)
                         QuestionSection(
                             question = qState.questions[currIndex],
                             selectedOption = selectedOption,
                             onOptionSelected = {
-                                viewModel.registerAnswer(currIndex, it)
+                                viewModel.registerAnswer(qState.questions[currIndex].id, it)
 
                                 if (currIndex + 1 >= qState.questions.size) {
                                     navController.navigate(Screens.ResultScreen)
