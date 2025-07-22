@@ -12,6 +12,12 @@ sealed class Screens {
     data object QuizScreen : Screens()
 
     @Serializable
-    data object ResultScreen : Screens()
+    data class ResultScreen(
+        val total: Int,
+        val correct: Int,
+        val incorrect: Int,
+        val skipped: Int,
+        val highestStreak: Int
+    ) : Screens()
 
 }

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.raagava.android.interview.apps.marrowquiz.presentation.app.Screens
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.ErrorView
+import com.raagava.android.interview.apps.marrowquiz.presentation.components.LoaderDialog
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.QuestionSection
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.TopBar
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.CorrectColor
@@ -45,6 +46,8 @@ fun QuizScreen(
     val questionsState by viewModel.questionsState.collectAsState()
     val currIndex by viewModel.currQuestionIndex
     val userAnswers by viewModel.userAnswers
+
+    val resultState = viewModel.resultState.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -123,7 +126,7 @@ fun QuizScreen(
                                     viewModel.registerAnswer(qState.questions[index].id, it)
 
                                     if (index + 1 >= qState.questions.size) {
-                                        navController.navigate(Screens.ResultScreen)
+                                        // Submit can be manually done by the user
                                     } else {
                                         viewModel.moveToNextQuestion()
                                     }
@@ -137,7 +140,9 @@ fun QuizScreen(
                             .padding(horizontal = 24.dp, vertical = 24.dp),
                         onClick = {
                             if (pager.currentPage + 1 >= qState.questions.size) {
-                                navController.navigate(Screens.ResultScreen)
+                                //Submitting the quiz for evaluation
+                                viewModel.submitQuiz()
+//                                navController.navigate(Screens.ResultScreen)
                             } else {
                                 coroutineScope.launch {
                                     pager.animateScrollToPage(pager.currentPage + 1)
@@ -152,6 +157,40 @@ fun QuizScreen(
                 }
             }
         }
+    }
+
+    when (resultState.value) {
+        ResultUiState.Loading -> {
+
+        }
+
+        is ResultUiState.Success -> {}
+        else -> {}
+    }
+
+    when (val res = resultState.value) {
+        ResultUiState.Loading -> {
+            LoaderDialog(
+                text = "Evaluating answers..",
+                isDisplayed = true
+            )
+        }
+
+        is ResultUiState.Success -> {
+            navController.navigate(
+                Screens.ResultScreen(
+                    total = res.result.total,
+                    correct = res.result.correct,
+                    incorrect = res.result.incorrect,
+                    skipped = res.result.skipped,
+                    highestStreak = res.result.highestStreak
+                )
+            ) {
+                popUpTo<Screens.QuizScreen> { inclusive = true }
+            }
+        }
+
+        else -> {}
     }
 }
 

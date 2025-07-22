@@ -1,5 +1,8 @@
 package com.raagava.android.interview.apps.marrowquiz.domain.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class QuizResult(
     val total: Int = 0,
     val correct: Int = 0,

@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.raagava.android.interview.apps.marrowquiz.domain.models.QuizResult
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.QuizScreen
-import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.QuizViewModel
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.ResultScreen
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.splash.SplashScreen
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun App(
@@ -39,10 +39,16 @@ fun App(
                 QuizScreen(navController = navController)
             }
             composable<Screens.ResultScreen> {
-                navController.previousBackStackEntry?.let {
-                    val vm = koinViewModel<QuizViewModel>(viewModelStoreOwner = it)
-                    ResultScreen(navController = navController, viewModel = vm)
-                }
+                val args = it.toRoute<Screens.ResultScreen>()
+                ResultScreen(
+                    navController = navController, result = QuizResult(
+                        total = args.total,
+                        correct = args.correct,
+                        incorrect = args.incorrect,
+                        skipped = args.skipped,
+                        highestStreak = args.highestStreak
+                    )
+                )
             }
         }
     }

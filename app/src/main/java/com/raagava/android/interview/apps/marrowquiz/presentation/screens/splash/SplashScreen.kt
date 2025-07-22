@@ -26,7 +26,9 @@ fun SplashScreen(
 
     if (loadState.value) {
         LaunchedEffect(Unit) {
-            navController.navigate(Screens.QuizScreen)
+            navController.navigate(Screens.QuizScreen) {
+                popUpTo(Screens.SplashScreen) { inclusive = true }
+            }
         }
     }
 

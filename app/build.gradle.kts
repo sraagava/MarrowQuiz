@@ -73,9 +73,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose-navigation:4.0.3")
 
     //Compose navigation
-    implementation("androidx.navigation:navigation-compose:2.9.2")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
     releaseImplementation("com.github.chuckerteam.chucker:library:4.0.0")
