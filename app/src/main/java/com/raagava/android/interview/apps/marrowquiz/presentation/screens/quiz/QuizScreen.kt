@@ -223,7 +223,7 @@ fun QuizScreen(
                     total = res.result.total,
                     correct = res.result.correct,
                     incorrect = res.result.incorrect,
-                    skipped = res.result.skipped,
+                    skipped = viewModel.maxStreak,
                     highestStreak = res.result.highestStreak
                 )
             ) {
