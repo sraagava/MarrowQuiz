@@ -26,6 +26,8 @@ class QuizViewModel(
     private val _userAnswers: MutableState<Map<Int, Int>> = mutableStateOf(mapOf())
     val userAnswers: MutableState<Map<Int, Int>> = _userAnswers
 
+    private var maxQuestions: Int = 0
+
     init {
         getQuestions()
     }
@@ -37,13 +39,17 @@ class QuizViewModel(
     }
 
     fun moveToNextQuestion() {
-        viewModelScope.launch {
-            delay(2000L)
-            updateCurrQuestionIndex(currQuestionIndex.value + 1)
+        //Checking for index out of bound
+        if (currQuestionIndex.value < maxQuestions - 1) {
+            viewModelScope.launch {
+                delay(2000L)
+                updateCurrQuestionIndex(currQuestionIndex.value + 1)
+            }
         }
     }
 
     fun updateCurrQuestionIndex(curr: Int) {
+        if (curr < 0 || curr >= maxQuestions) return
         currQuestionIndex.value = curr
     }
 
@@ -60,6 +66,7 @@ class QuizViewModel(
                     }
 
                     is DataResponse.Success<List<Question>> -> {
+                        maxQuestions = resp.data.size
                         _questionsState.value = QuestionsUiState.Success(resp.data)
                     }
                 }
