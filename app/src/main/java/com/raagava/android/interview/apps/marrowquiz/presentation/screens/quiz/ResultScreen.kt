@@ -139,7 +139,7 @@ fun ResultScreen(
                     span = { GridItemSpan(maxLineSpan) }
                 ) {
                     Button(onClick = {
-                        navController.navigate(Screens.QuestionsScreen)
+                        navController.navigate(Screens.QuizScreen)
                     }) {
                         Text(text = "Restart Quiz")
                     }

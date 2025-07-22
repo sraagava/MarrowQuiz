@@ -9,7 +9,7 @@ sealed class Screens {
     data object SplashScreen : Screens()
 
     @Serializable
-    data object QuestionsScreen : Screens()
+    data object QuizScreen : Screens()
 
     @Serializable
     data object ResultScreen : Screens()

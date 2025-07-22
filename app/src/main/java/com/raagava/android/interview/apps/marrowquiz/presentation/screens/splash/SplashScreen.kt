@@ -26,7 +26,7 @@ fun SplashScreen(
 
     if (loadState.value) {
         LaunchedEffect(Unit) {
-            navController.navigate(Screens.QuestionsScreen)
+            navController.navigate(Screens.QuizScreen)
         }
     }
 

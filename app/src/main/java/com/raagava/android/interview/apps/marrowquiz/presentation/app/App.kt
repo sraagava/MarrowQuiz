@@ -35,7 +35,7 @@ fun App(
             composable<Screens.SplashScreen> {
                 SplashScreen(navController = navController)
             }
-            composable<Screens.QuestionsScreen> {
+            composable<Screens.QuizScreen> {
                 QuizScreen(navController = navController)
             }
             composable<Screens.ResultScreen> {
