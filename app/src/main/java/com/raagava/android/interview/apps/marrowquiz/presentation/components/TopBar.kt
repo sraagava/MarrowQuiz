@@ -23,7 +23,7 @@ fun TopBar(modifier: Modifier = Modifier, title: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Quiz",
+            text = title,
             style = MaterialTheme.typography.titleLarge
         )
     }

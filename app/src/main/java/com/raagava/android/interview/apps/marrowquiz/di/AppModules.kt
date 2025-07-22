@@ -5,6 +5,7 @@ import com.raagava.android.interview.apps.marrowquiz.data.remote.ApiProvider
 import com.raagava.android.interview.apps.marrowquiz.data.remote.QuizApi
 import com.raagava.android.interview.apps.marrowquiz.data.repository.QuizRepositoryImpl
 import com.raagava.android.interview.apps.marrowquiz.domain.repository.QuizRepository
+import com.raagava.android.interview.apps.marrowquiz.domain.use_case.evaluate_answers.EvaluateAnswersUseCase
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_questions.GetQuestionsUseCase
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.QuizViewModel
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.splash.SplashViewModel
@@ -37,6 +38,7 @@ val domainModules = module {
 
     //UseCase
     single { GetQuestionsUseCase(get()) }
+    single { EvaluateAnswersUseCase() }
 }
 
 val appModule = module {
@@ -46,7 +48,7 @@ val appModule = module {
         SplashViewModel(get())
     }
     viewModel {
-        QuizViewModel(get())
+        QuizViewModel(get(), get())
     }
 }
 

@@ -1,11 +1,14 @@
 package com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raagava.android.interview.apps.marrowquiz.domain.models.Question
+import com.raagava.android.interview.apps.marrowquiz.domain.models.QuizResult
+import com.raagava.android.interview.apps.marrowquiz.domain.use_case.evaluate_answers.EvaluateAnswersUseCase
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_questions.GetQuestionsUseCase
 import com.raagava.android.interview.apps.marrowquiz.utils.DataResponse
 import kotlinx.coroutines.delay
@@ -15,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class QuizViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase,
+    private val evaluateAnswersUseCase: EvaluateAnswersUseCase
 ) : ViewModel() {
 
     private val _questionsState = MutableStateFlow<QuestionsUiState>(QuestionsUiState.Loading)
@@ -27,6 +31,9 @@ class QuizViewModel(
     val userAnswers: MutableState<Map<Int, Int>> = _userAnswers
 
     private var maxQuestions: Int = 0
+
+    private val _resultState: MutableStateFlow<QuizResult?> = MutableStateFlow(null)
+    val resultState: StateFlow<QuizResult?> = _resultState
 
     init {
         getQuestions()
@@ -72,5 +79,18 @@ class QuizViewModel(
                 }
             }
         }
+    }
+
+    fun evaluateAnswers() {
+        val qState = questionsState.value
+
+        if (qState !is QuestionsUiState.Success) return
+
+        val result = evaluateAnswersUseCase.invoke(
+            qState.questions,
+            userAnswers.value
+        )
+        _resultState.value = result
+        Log.e("Debug", result.toString())
     }
 }

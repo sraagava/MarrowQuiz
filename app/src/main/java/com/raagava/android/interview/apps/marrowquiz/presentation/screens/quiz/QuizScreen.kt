@@ -93,21 +93,24 @@ fun QuizScreen(
                                 }
                             })
                     }
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp, vertical = 24.dp),
+                        onClick = {
+                            if (currIndex + 1 >= qState.questions.size) {
+                                navController.navigate(Screens.ResultScreen)
+                            } else {
+                                viewModel.updateCurrQuestionIndex(currIndex + 1)
+                            }
+                        }
+                    ) {
+                        Text(text = "Next")
+                    }
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 24.dp),
-            onClick = {
-                viewModel.updateCurrQuestionIndex(currIndex + 1)
-            }
-        ) {
-            Text(text = "Next")
         }
     }
 }
