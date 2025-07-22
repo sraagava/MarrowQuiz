@@ -11,7 +11,7 @@ suspend fun <T> safeApiCall(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     apiCall: suspend () -> T
 ): DataResponse<T> {
-    val s = withContext(dispatcher) {
+    return withContext(dispatcher) {
         try {
             DataResponse.Success(apiCall())
         } catch (e: HttpException) {
@@ -29,6 +29,4 @@ suspend fun <T> safeApiCall(
             )
         }
     }
-
-    return s
 }

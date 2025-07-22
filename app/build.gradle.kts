@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "1.9.10"
 }
 
 android {
@@ -69,5 +70,13 @@ dependencies {
 
     //Dependency Injection
     implementation("io.insert-koin:koin-android:4.0.3")
-    implementation("io.insert-koin:koin-androidx-navigation:4.0.3")
+    implementation("io.insert-koin:koin-androidx-compose-navigation:4.0.3")
+
+    //Compose navigation
+    implementation("androidx.navigation:navigation-compose:2.9.2")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
+    releaseImplementation("com.github.chuckerteam.chucker:library:4.0.0")
 }
