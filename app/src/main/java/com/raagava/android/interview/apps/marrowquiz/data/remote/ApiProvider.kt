@@ -15,14 +15,16 @@ class ApiProvider : KoinComponent {
 
     fun getRetrofit(): Retrofit {
 
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(ChuckerInterceptor(context = context))
+        val okHttpClientBuilder = OkHttpClient.Builder()
             .callTimeout(5000L, java.util.concurrent.TimeUnit.MILLISECONDS)
-            .build()
+
+        if (BuildConfig.DEBUG) {
+            okHttpClientBuilder.addInterceptor(ChuckerInterceptor(context = context))
+        }
 
         return Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
-            .client(okHttpClient)
+            .client(okHttpClientBuilder.build())
             .addConverterFactory(
                 GsonConverterFactory.create()
             ).build()
