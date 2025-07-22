@@ -11,13 +11,13 @@ class QuizRepositoryImpl(
 ) : QuizRepository {
 
     override suspend fun getQuizQuestions(): List<QuestionDto> {
-//        val questions = cache.getQuestions()
-//        if (questions.isNotEmpty()) {
-//            return questions
-//        }
+        val questions = cache.getQuestions()
+        if (questions.isNotEmpty()) {
+            return questions
+        }
         try {
             val resp = api.getQuestions()
-//            cache.setQuestions(resp)
+            cache.setQuestions(resp)
 
             return resp
         } catch (e: Exception) {
