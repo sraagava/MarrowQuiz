@@ -59,7 +59,7 @@ fun QuizScreen(
     val resultState = viewModel.resultState.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
-    var isActionButtonEnabled = remember { mutableStateOf(true) }
+    var isDelayScrollActive = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -115,7 +115,8 @@ fun QuizScreen(
                     HorizontalPager(
                         state = pager,
                         modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.Top
+                        verticalAlignment = Alignment.Top,
+                        userScrollEnabled = !isDelayScrollActive.value
                     ) { index ->
 
                         Column(
@@ -145,10 +146,10 @@ fun QuizScreen(
                                         // Submit can be manually done by the user
                                     } else {
                                         coroutineScope.launch {
-                                            isActionButtonEnabled.value = false
+                                            isDelayScrollActive.value = true
                                             delay(2000L)
                                             pager.animateScrollToPage(index + 1)
-                                            isActionButtonEnabled.value = true
+                                            isDelayScrollActive.value = false
                                         }
 
                                     }
@@ -171,9 +172,9 @@ fun QuizScreen(
                                 }
                             }
                         },
-                        enabled = isActionButtonEnabled.value
+                        enabled = !isDelayScrollActive.value
                     ) {
-                        if (isActionButtonEnabled.value) {
+                        if (!isDelayScrollActive.value) {
                             val ctaText = when {
                                 //Last question
                                 (currIndex + 1 >= qState.questions.size) -> "Submit"
