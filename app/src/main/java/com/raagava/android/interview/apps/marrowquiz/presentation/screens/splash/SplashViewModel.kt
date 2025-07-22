@@ -1,9 +1,9 @@
 package com.raagava.android.interview.apps.marrowquiz.presentation.screens.splash
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_questions.GetQuestionsUseCase
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.QuestionsUiState
 import com.raagava.android.interview.apps.marrowquiz.utils.DataError
 import com.raagava.android.interview.apps.marrowquiz.utils.DataResponse
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +14,8 @@ class SplashViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase
 ) : ViewModel() {
 
-    private val _loadState = MutableStateFlow<Boolean>(false)
-    val loadState: StateFlow<Boolean> = _loadState
+    private val _loadState = MutableStateFlow<QuestionsUiState>(QuestionsUiState.Loading)
+    val loadState: StateFlow<QuestionsUiState> = _loadState
 
     init {
         getQuestions()
@@ -26,23 +26,24 @@ class SplashViewModel(
             getQuestionsUseCase().collect { resp ->
                 when (resp) {
                     is DataResponse.Success -> {
-                        _loadState.value = true
+                        _loadState.value = QuestionsUiState.Success(resp.data)
                     }
 
                     is DataResponse.Error -> {
                         when (resp.error) {
                             is DataError.HttpError -> {
-                                Log.e("Debug", "error ${resp.error.code}")
+                                _loadState.value =
+                                    QuestionsUiState.Error("${resp.error.code}: ${resp.error.message}")
                             }
 
                             is DataError.RequestError -> {
-                                Log.e("Debug", "error ${resp.error.message}")
+                                _loadState.value = QuestionsUiState.Error(resp.error.message)
                             }
                         }
                     }
 
                     DataResponse.Loading -> {
-                        Log.e("Debug", "Loading")
+                        _loadState.value = QuestionsUiState.Loading
                     }
                 }
             }

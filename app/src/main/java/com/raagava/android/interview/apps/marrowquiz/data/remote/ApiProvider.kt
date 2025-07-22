@@ -17,6 +17,7 @@ class ApiProvider : KoinComponent {
 
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(ChuckerInterceptor(context = context))
+            .callTimeout(5000L, java.util.concurrent.TimeUnit.MILLISECONDS)
             .build()
 
         return Retrofit.Builder()
