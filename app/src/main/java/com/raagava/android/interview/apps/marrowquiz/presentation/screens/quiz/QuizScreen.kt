@@ -199,15 +199,6 @@ fun QuizScreen(
         }
     }
 
-    when (resultState.value) {
-        ResultUiState.Loading -> {
-
-        }
-
-        is ResultUiState.Success -> {}
-        else -> {}
-    }
-
     when (val res = resultState.value) {
         ResultUiState.Loading -> {
             LoaderDialog(
@@ -222,8 +213,8 @@ fun QuizScreen(
                     total = res.result.total,
                     correct = res.result.correct,
                     incorrect = res.result.incorrect,
-                    skipped = viewModel.maxStreak,
-                    highestStreak = res.result.highestStreak
+                    skipped = res.result.skipped,
+                    highestStreak = viewModel.maxStreak
                 )
             ) {
                 popUpTo<Screens.QuizScreen> { inclusive = true }
