@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -14,8 +16,11 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +34,7 @@ import com.raagava.android.interview.apps.marrowquiz.presentation.components.Que
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.TopBar
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.CorrectColor
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.PrimaryColor
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -39,6 +45,8 @@ fun QuizScreen(
     val questionsState by viewModel.questionsState.collectAsState()
     val currIndex by viewModel.currQuestionIndex
     val userAnswers by viewModel.userAnswers
+
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -81,50 +89,65 @@ fun QuizScreen(
                         color = CorrectColor,
                         trackColor = MaterialTheme.colorScheme.secondary
                     )
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp)
-                            .verticalScroll(state = rememberScrollState())
-                    ) {
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Text(
-                            text = "Question ${currIndex + 1} of ${qState.questions.size}",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = PrimaryColor
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        val selectedOption =
-                            userAnswers.getOrDefault(qState.questions[currIndex].id, null)
-                        QuestionSection(
-                            question = qState.questions[currIndex],
-                            selectedOption = selectedOption,
-                            onOptionSelected = {
-                                viewModel.registerAnswer(qState.questions[currIndex].id, it)
-
-                                if (currIndex + 1 >= qState.questions.size) {
-                                    navController.navigate(Screens.ResultScreen)
-                                } else {
-                                    viewModel.moveToNextQuestion()
-                                }
-                            })
+                    val pager = rememberPagerState { qState.questions.size }
+                    LaunchedEffect(pager.currentPage) {
+                        viewModel.currQuestionIndex.value = pager.currentPage
                     }
-                    Spacer(modifier = Modifier.weight(1f))
+                    HorizontalPager(
+                        state = pager,
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.Top
+                    ) { index ->
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 24.dp)
+                                .verticalScroll(state = rememberScrollState())
+                        ) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(
+                                text = "Question ${index + 1} of ${qState.questions.size}",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = PrimaryColor
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            val selectedOption =
+                                userAnswers.getOrDefault(qState.questions[index].id, null)
+                            QuestionSection(
+                                question = qState.questions[index],
+                                selectedOption = selectedOption,
+                                onOptionSelected = {
+                                    viewModel.registerAnswer(qState.questions[index].id, it)
+
+                                    if (index + 1 >= qState.questions.size) {
+                                        navController.navigate(Screens.ResultScreen)
+                                    } else {
+                                        viewModel.moveToNextQuestion()
+                                    }
+                                })
+                        }
+                    }
 
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp, vertical = 24.dp),
                         onClick = {
-                            if (currIndex + 1 >= qState.questions.size) {
+                            if (pager.currentPage + 1 >= qState.questions.size) {
                                 navController.navigate(Screens.ResultScreen)
                             } else {
-                                viewModel.updateCurrQuestionIndex(currIndex + 1)
+                                coroutineScope.launch {
+                                    pager.animateScrollToPage(pager.currentPage + 1)
+                                }
                             }
                         }
                     ) {
-                        Text(text = "Next")
+                        val ctaText =
+                            if (currIndex + 1 >= qState.questions.size) "Submit" else "Next"
+                        Text(text = ctaText)
                     }
                 }
             }
