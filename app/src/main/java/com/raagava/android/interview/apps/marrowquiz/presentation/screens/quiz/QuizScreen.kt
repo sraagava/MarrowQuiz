@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +59,7 @@ fun QuizScreen(
     val resultState = viewModel.resultState.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
+    var isActionButtonEnabled = remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -141,8 +145,10 @@ fun QuizScreen(
                                         // Submit can be manually done by the user
                                     } else {
                                         coroutineScope.launch {
+                                            isActionButtonEnabled.value = false
                                             delay(2000L)
                                             pager.animateScrollToPage(index + 1)
+                                            isActionButtonEnabled.value = true
                                         }
 
                                     }
@@ -164,21 +170,30 @@ fun QuizScreen(
                                     pager.animateScrollToPage(pager.currentPage + 1)
                                 }
                             }
-                        }
+                        },
+                        enabled = isActionButtonEnabled.value
                     ) {
-                        val ctaText = when {
-                            //Last question
-                            (currIndex + 1 >= qState.questions.size) -> "Submit"
+                        if (isActionButtonEnabled.value) {
+                            val ctaText = when {
+                                //Last question
+                                (currIndex + 1 >= qState.questions.size) -> "Submit"
 
-                            //If not answered
-                            userAnswers.getOrDefault(
-                                qState.questions[currIndex].id,
-                                null
-                            ) == null -> "Skip"
+                                //If not answered
+                                userAnswers.getOrDefault(
+                                    qState.questions[currIndex].id,
+                                    null
+                                ) == null -> "Skip"
 
-                            else -> "Next"
+                                else -> "Next"
+                            }
+                            Text(text = ctaText)
+                        } else {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                color = MaterialTheme.colorScheme.secondary,
+                                strokeWidth = 2.dp
+                            )
                         }
-                        Text(text = ctaText)
                     }
                 }
             }
