@@ -1,5 +1,6 @@
 package com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,9 +33,13 @@ import com.raagava.android.interview.apps.marrowquiz.presentation.app.Screens
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.ErrorView
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.LoaderDialog
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.QuestionSection
+import com.raagava.android.interview.apps.marrowquiz.presentation.components.Streak
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.TopBar
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.QuestionsUiState
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.ResultUiState
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.CorrectColor
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.PrimaryColor
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -46,6 +51,7 @@ fun QuizScreen(
     val questionsState by viewModel.questionsState.collectAsState()
     val currIndex by viewModel.currQuestionIndex
     val userAnswers by viewModel.userAnswers
+    val streak by viewModel.streakState.collectAsState()
 
     val resultState = viewModel.resultState.collectAsState()
 
@@ -55,7 +61,13 @@ fun QuizScreen(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        TopBar(title = "Quiz")
+        Box(modifier = Modifier.fillMaxWidth()) {
+            TopBar(title = "Quiz")
+            Streak(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                streak = streak
+            )
+        }
 
         when (val qState = questionsState) {
             is QuestionsUiState.Error -> {
@@ -128,7 +140,11 @@ fun QuizScreen(
                                     if (index + 1 >= qState.questions.size) {
                                         // Submit can be manually done by the user
                                     } else {
-                                        viewModel.moveToNextQuestion()
+                                        coroutineScope.launch {
+                                            delay(2000L)
+                                            pager.animateScrollToPage(index + 1)
+                                        }
+
                                     }
                                 })
                         }
@@ -150,8 +166,18 @@ fun QuizScreen(
                             }
                         }
                     ) {
-                        val ctaText =
-                            if (currIndex + 1 >= qState.questions.size) "Submit" else "Next"
+                        val ctaText = when {
+                            //Last question
+                            (currIndex + 1 >= qState.questions.size) -> "Submit"
+
+                            //If not answered
+                            userAnswers.getOrDefault(
+                                qState.questions[currIndex].id,
+                                null
+                            ) == null -> "Skip"
+
+                            else -> "Next"
+                        }
                         Text(text = ctaText)
                     }
                 }

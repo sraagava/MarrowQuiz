@@ -1,4 +1,4 @@
-package com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz
+package com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states
 
 import com.raagava.android.interview.apps.marrowquiz.domain.models.QuizResult
 

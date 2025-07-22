@@ -8,8 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.raagava.android.interview.apps.marrowquiz.domain.models.Question
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.evaluate_answers.EvaluateAnswersUseCase
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_questions.GetQuestionsUseCase
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.QuestionsUiState
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.ResultUiState
 import com.raagava.android.interview.apps.marrowquiz.utils.DataResponse
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -33,23 +34,35 @@ class QuizViewModel(
     private val _resultState: MutableStateFlow<ResultUiState?> = MutableStateFlow(null)
     val resultState: StateFlow<ResultUiState?> = _resultState
 
+    private val _streakState: MutableStateFlow<Int> = MutableStateFlow(0)
+    val streakState: StateFlow<Int> = _streakState
+
+    var maxStreak: Int = 0
+        private set
+
     init {
         getQuestions()
     }
 
     fun registerAnswer(questionId: Int, optionIndex: Int) {
+        val question = (questionsState.value as? QuestionsUiState.Success)
+            ?.questions
+            ?.find { it.id == questionId } ?: return
+
         userAnswers.value = userAnswers.value.toMutableMap().apply {
             put(questionId, optionIndex)
         }
-    }
 
-    fun moveToNextQuestion() {
-        //Checking for index out of bound
-        if (currQuestionIndex.value < maxQuestions - 1) {
-            viewModelScope.launch {
-                delay(2000L)
-                updateCurrQuestionIndex(currQuestionIndex.value + 1)
+        //Update Streak
+        val isCorrect = question.correctOptionIndex == optionIndex
+        if (isCorrect) {
+            _streakState.value += 1
+
+            if (maxStreak < _streakState.value) {
+                maxStreak = _streakState.value
             }
+        } else {
+            _streakState.value = 0
         }
     }
 
