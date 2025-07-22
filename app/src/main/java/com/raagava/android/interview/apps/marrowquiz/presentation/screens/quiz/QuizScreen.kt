@@ -51,8 +51,8 @@ fun QuizScreen(
 ) {
 
     val questionsState by viewModel.questionsState.collectAsState()
-    val currIndex by viewModel.currQuestionIndex
-    val userAnswers by viewModel.userAnswers
+    val currIndex by viewModel.currQuestionIndex.collectAsState()
+    val userAnswers by viewModel.userAnswers.collectAsState()
     val streak by viewModel.streakState.collectAsState()
 
     val resultState = viewModel.resultState.collectAsState()
@@ -109,7 +109,7 @@ fun QuizScreen(
                     )
                     val pager = rememberPagerState { qState.questions.size }
                     LaunchedEffect(pager.currentPage) {
-                        viewModel.currQuestionIndex.value = pager.currentPage
+                        viewModel.updateCurrQuestionIndex(pager.currentPage)
                     }
                     HorizontalPager(
                         state = pager,

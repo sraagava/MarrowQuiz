@@ -1,8 +1,5 @@
 package com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raagava.android.interview.apps.marrowquiz.domain.models.Question
@@ -23,11 +20,11 @@ class QuizViewModel(
     private val _questionsState = MutableStateFlow<QuestionsUiState>(QuestionsUiState.Loading)
     val questionsState: StateFlow<QuestionsUiState> = _questionsState
 
-    private val _currQuestionIndex: MutableState<Int> = mutableIntStateOf(0)
-    val currQuestionIndex: MutableState<Int> = _currQuestionIndex
+    private val _currQuestionIndex: MutableStateFlow<Int> = MutableStateFlow(0)
+    val currQuestionIndex: StateFlow<Int> = _currQuestionIndex
 
-    private val _userAnswers: MutableState<Map<Int, Int>> = mutableStateOf(mapOf())
-    val userAnswers: MutableState<Map<Int, Int>> = _userAnswers
+    private val _userAnswers: MutableStateFlow<Map<Int, Int>> = MutableStateFlow(mapOf())
+    val userAnswers: StateFlow<Map<Int, Int>> = _userAnswers
 
     private var maxQuestions: Int = 0
 
@@ -49,7 +46,7 @@ class QuizViewModel(
             ?.questions
             ?.find { it.id == questionId } ?: return
 
-        userAnswers.value = userAnswers.value.toMutableMap().apply {
+        _userAnswers.value = userAnswers.value.toMutableMap().apply {
             put(questionId, optionIndex)
         }
 
@@ -68,7 +65,7 @@ class QuizViewModel(
 
     fun updateCurrQuestionIndex(curr: Int) {
         if (curr < 0 || curr >= maxQuestions) return
-        currQuestionIndex.value = curr
+        _currQuestionIndex.value = curr
     }
 
     fun getQuestions() {
