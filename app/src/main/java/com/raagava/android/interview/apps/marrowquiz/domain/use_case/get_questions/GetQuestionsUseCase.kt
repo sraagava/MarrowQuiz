@@ -26,7 +26,7 @@ class GetQuestionsUseCase(
                 response.data.forEachIndexed { ind, item ->
                     qList.add(
                         item.copy(
-                            userAnswerIndex = ind
+                            userAnswerIndex = previousAnswers[ind]
                         )
                     )
                 }

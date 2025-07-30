@@ -53,7 +53,7 @@ val appModule = module {
         SplashViewModel(get())
     }
     viewModel {
-        QuizViewModel(get(), get())
+        QuizViewModel(get(), get(), get())
     }
     viewModel {
         ModuleListViewModel(get())

@@ -6,7 +6,7 @@ class StoreQuizAttemptUseCase(
     private val repository: QuizRepository
 ) {
 
-    suspend fun storeQuizAttempt(
+    suspend operator fun invoke(
         moduleId: String,
         answers: List<Int?>,
         total: Int,

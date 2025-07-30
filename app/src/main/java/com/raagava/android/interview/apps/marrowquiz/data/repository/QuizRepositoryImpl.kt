@@ -18,7 +18,9 @@ class QuizRepositoryImpl(
             return questions
         }
         try {
-            val resp = api.getQuestions(moduleId)
+            val url = cache.getModules().find { it.id == moduleId }?.questionsUrl
+                ?: throw Exception("Questions URL not found")
+            val resp = api.getQuestions(url)
             cache.setQuestions(moduleId, questions ?: listOf())
             return resp
         } catch (e: Exception) {

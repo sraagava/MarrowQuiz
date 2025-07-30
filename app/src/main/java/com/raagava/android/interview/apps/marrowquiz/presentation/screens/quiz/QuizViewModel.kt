@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.raagava.android.interview.apps.marrowquiz.domain.models.Question
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.evaluate_answers.EvaluateAnswersUseCase
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_questions.GetQuestionsUseCase
+import com.raagava.android.interview.apps.marrowquiz.domain.use_case.store_quiz_attempt.StoreQuizAttemptUseCase
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.QuestionsUiState
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.ResultUiState
 import com.raagava.android.interview.apps.marrowquiz.utils.DataResponse
@@ -14,8 +15,11 @@ import kotlinx.coroutines.launch
 
 class QuizViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase,
-    private val evaluateAnswersUseCase: EvaluateAnswersUseCase
+    private val evaluateAnswersUseCase: EvaluateAnswersUseCase,
+    private val storeQuizAttemptUseCase: StoreQuizAttemptUseCase
 ) : ViewModel() {
+
+    private var moduleId: String? = null
 
     private val _questionsState = MutableStateFlow<QuestionsUiState>(QuestionsUiState.Loading)
     val questionsState: StateFlow<QuestionsUiState> = _questionsState
@@ -89,15 +93,33 @@ class QuizViewModel(
         }
     }
 
-    fun submitQuiz() {
-        val qState = questionsState.value
-        if (qState !is QuestionsUiState.Success) return
+    fun submitQuiz(moduleId: String) {
+        viewModelScope.launch {
+            val qState = questionsState.value
+            val aState = userAnswers.value
 
-        val result = evaluateAnswersUseCase.invoke(
-            questions = qState.questions,
-            answers = userAnswers.value
-        )
+            if (qState !is QuestionsUiState.Success) return@launch
 
-        _resultState.value = ResultUiState.Success(result)
+            val result = evaluateAnswersUseCase.invoke(
+                questions = qState.questions,
+                answers = userAnswers.value
+            )
+
+            val uAnsList = mutableListOf<Int?>()
+            for (i in 0 until qState.questions.size) {
+                val q = qState.questions[i]
+                val ans = aState[q.id]
+                uAnsList.add(ans)
+            }
+
+            storeQuizAttemptUseCase.invoke(
+                moduleId = moduleId,
+                answers = uAnsList,
+                total = result.total,
+                correct = result.correct
+            )
+
+            _resultState.value = ResultUiState.Success(result)
+        }
     }
 }

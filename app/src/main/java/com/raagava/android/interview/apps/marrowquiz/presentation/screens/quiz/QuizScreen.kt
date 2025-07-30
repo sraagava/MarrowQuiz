@@ -169,7 +169,7 @@ fun QuizScreen(
                         onClick = {
                             if (pager.currentPage + 1 >= qState.questions.size) {
                                 //Submitting the quiz for evaluation
-                                viewModel.submitQuiz()
+                                viewModel.submitQuiz(moduleId)
                             } else {
                                 coroutineScope.launch {
                                     pager.animateScrollToPage(pager.currentPage + 1)
