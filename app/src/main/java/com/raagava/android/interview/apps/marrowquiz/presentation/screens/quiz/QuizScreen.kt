@@ -141,6 +141,9 @@ fun QuizScreen(
                             QuestionSection(
                                 question = qState.questions[index],
                                 onOptionSelected = {
+                                    if (isReview) {
+                                        return@QuestionSection
+                                    }
                                     viewModel.registerAnswer(qState.questions[index].id, it)
 
                                     if (index + 1 >= qState.questions.size) {
