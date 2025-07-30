@@ -12,10 +12,29 @@ class GetQuestionsUseCase(
     private val repository: QuizRepository
 ) {
 
-    operator fun invoke(): Flow<DataResponse<List<Question>>> = flow {
+    operator fun invoke(moduleId: String): Flow<DataResponse<List<Question>>> = flow {
         emit(DataResponse.Loading)
         val response = safeApiCall {
-            repository.getQuizQuestions().map { it.toDomain() }
+            repository.getQuizQuestions(moduleId).map { it.toDomain() }
+        }
+        if (response is DataResponse.Success) {
+
+            val qList = mutableListOf<Question>()
+
+            val previousAnswers = repository.getPastUserAnswers(moduleId)
+            if (!previousAnswers.isNullOrEmpty()) {
+                response.data.forEachIndexed { ind, item ->
+                    qList.add(
+                        item.copy(
+                            userAnswerIndex = ind
+                        )
+                    )
+                }
+            } else {
+                qList.addAll(response.data)
+            }
+            emit(DataResponse.Success(qList))
+            return@flow
         }
         emit(response)
     }

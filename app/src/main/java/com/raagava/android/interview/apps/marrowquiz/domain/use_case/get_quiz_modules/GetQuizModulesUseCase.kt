@@ -40,6 +40,7 @@ class GetQuizModulesUseCase(
             }
 
             emit(DataResponse.Success(qModules))
+            return@flow
         } else {
             emit(quizModules)
         }

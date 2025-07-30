@@ -4,5 +4,6 @@ data class Question(
     val correctOptionIndex: Int,
     val id: Int,
     val options: List<String>,
-    val question: String
+    val question: String,
+    val userAnswerIndex: Int? = null
 )

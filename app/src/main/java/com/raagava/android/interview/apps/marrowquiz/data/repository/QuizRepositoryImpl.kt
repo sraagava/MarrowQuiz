@@ -12,15 +12,14 @@ class QuizRepositoryImpl(
     private val cache: QuestionsCache
 ) : QuizRepository {
 
-    override suspend fun getQuizQuestions(): List<QuestionDto> {
-        val questions = cache.getQuestions()
-        if (questions.isNotEmpty()) {
+    override suspend fun getQuizQuestions(moduleId: String): List<QuestionDto> {
+        val questions = cache.getQuestions(moduleId)
+        if (!questions.isNullOrEmpty()) {
             return questions
         }
         try {
-            val resp = api.getQuestions()
-            cache.setQuestions(resp)
-
+            val resp = api.getQuestions(moduleId)
+            cache.setQuestions(moduleId, questions ?: listOf())
             return resp
         } catch (e: Exception) {
             throw e
@@ -28,7 +27,17 @@ class QuizRepositoryImpl(
     }
 
     override suspend fun getQuizModules(): List<QuizModuleDto> {
-        return api.getQuizModules()
+        val questions = cache.getModules()
+        if (questions.isNotEmpty()) {
+            return questions
+        }
+        try {
+            val resp = api.getQuizModules()
+            cache.setModules(resp)
+            return resp
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     override suspend fun storeAttempt(moduleId: String, attempt: PastModuleAttempt) {
@@ -36,6 +45,10 @@ class QuizRepositoryImpl(
     }
 
     override suspend fun getPastAttempts(): Map<String, PastModuleAttempt> {
-        return cache.getQuizData()
+        return cache.getPastAttempts()
+    }
+
+    override suspend fun getPastUserAnswers(moduleId: String): List<Int?>? {
+        return cache.getQuizUserAnswers(moduleId)
     }
 }
