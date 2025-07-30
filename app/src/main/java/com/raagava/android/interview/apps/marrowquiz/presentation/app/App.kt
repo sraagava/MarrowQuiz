@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.raagava.android.interview.apps.marrowquiz.domain.models.QuizResult
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.module_list.ModuleListScreen
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.QuizScreen
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.ResultScreen
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.splash.SplashScreen
@@ -36,7 +37,8 @@ fun App(
                 SplashScreen(navController = navController)
             }
             composable<Screens.QuizScreen> {
-                QuizScreen(navController = navController)
+                val args = it.toRoute<Screens.QuizScreen>()
+                QuizScreen(navController = navController, moduleId = args.moduleId)
             }
             composable<Screens.ResultScreen> {
                 val args = it.toRoute<Screens.ResultScreen>()
@@ -48,6 +50,11 @@ fun App(
                         skipped = args.skipped,
                         highestStreak = args.highestStreak
                     )
+                )
+            }
+            composable<Screens.ModuleListScreen> {
+                ModuleListScreen(
+                    navController = navController
                 )
             }
         }

@@ -9,7 +9,9 @@ sealed class Screens {
     data object SplashScreen : Screens()
 
     @Serializable
-    data object QuizScreen : Screens()
+    data class QuizScreen(
+        val moduleId: String,
+    ) : Screens()
 
     @Serializable
     data class ResultScreen(
@@ -19,5 +21,8 @@ sealed class Screens {
         val skipped: Int,
         val highestStreak: Int
     ) : Screens()
+
+    @Serializable
+    data object ModuleListScreen : Screens()
 
 }

@@ -2,8 +2,8 @@ package com.raagava.android.interview.apps.marrowquiz.presentation.screens.splas
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_questions.GetQuestionsUseCase
-import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.QuestionsUiState
+import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_quiz_modules.GetQuizModulesUseCase
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.module_list.ModuleListUiState
 import com.raagava.android.interview.apps.marrowquiz.utils.DataError
 import com.raagava.android.interview.apps.marrowquiz.utils.DataResponse
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SplashViewModel(
-    private val getQuestionsUseCase: GetQuestionsUseCase
+    private val getQuizModulesUseCase: GetQuizModulesUseCase
 ) : ViewModel() {
 
-    private val _loadState = MutableStateFlow<QuestionsUiState>(QuestionsUiState.Loading)
-    val loadState: StateFlow<QuestionsUiState> = _loadState
+    private val _loadState = MutableStateFlow<ModuleListUiState>(ModuleListUiState.Loading)
+    val loadState: StateFlow<ModuleListUiState> = _loadState
 
     init {
         getQuestions()
@@ -23,27 +23,27 @@ class SplashViewModel(
 
     fun getQuestions() {
         viewModelScope.launch {
-            getQuestionsUseCase().collect { resp ->
+            getQuizModulesUseCase().collect { resp ->
                 when (resp) {
                     is DataResponse.Success -> {
-                        _loadState.value = QuestionsUiState.Success(resp.data)
+                        _loadState.value = ModuleListUiState.Success(resp.data)
                     }
 
                     is DataResponse.Error -> {
                         when (resp.error) {
                             is DataError.HttpError -> {
                                 _loadState.value =
-                                    QuestionsUiState.Error("${resp.error.code}: ${resp.error.message}")
+                                    ModuleListUiState.Error("${resp.error.code}: ${resp.error.message}")
                             }
 
                             is DataError.RequestError -> {
-                                _loadState.value = QuestionsUiState.Error(resp.error.message)
+                                _loadState.value = ModuleListUiState.Error(resp.error.message)
                             }
                         }
                     }
 
                     DataResponse.Loading -> {
-                        _loadState.value = QuestionsUiState.Loading
+                        _loadState.value = ModuleListUiState.Loading
                     }
                 }
             }

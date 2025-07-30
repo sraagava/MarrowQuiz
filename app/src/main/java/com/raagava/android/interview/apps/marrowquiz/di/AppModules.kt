@@ -7,6 +7,9 @@ import com.raagava.android.interview.apps.marrowquiz.data.repository.QuizReposit
 import com.raagava.android.interview.apps.marrowquiz.domain.repository.QuizRepository
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.evaluate_answers.EvaluateAnswersUseCase
 import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_questions.GetQuestionsUseCase
+import com.raagava.android.interview.apps.marrowquiz.domain.use_case.get_quiz_modules.GetQuizModulesUseCase
+import com.raagava.android.interview.apps.marrowquiz.domain.use_case.store_quiz_attempt.StoreQuizAttemptUseCase
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.module_list.ModuleListViewModel
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.QuizViewModel
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.splash.SplashViewModel
 import org.koin.core.module.dsl.viewModel
@@ -39,6 +42,8 @@ val domainModules = module {
     //UseCase
     single { GetQuestionsUseCase(get()) }
     single { EvaluateAnswersUseCase() }
+    single { GetQuizModulesUseCase(get()) }
+    single { StoreQuizAttemptUseCase(get()) }
 }
 
 val appModule = module {
@@ -49,6 +54,9 @@ val appModule = module {
     }
     viewModel {
         QuizViewModel(get(), get())
+    }
+    viewModel {
+        ModuleListViewModel(get())
     }
 }
 

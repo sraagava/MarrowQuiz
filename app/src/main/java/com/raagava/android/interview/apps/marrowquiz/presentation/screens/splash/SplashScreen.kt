@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.raagava.android.interview.apps.marrowquiz.presentation.app.Screens
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.ErrorView
-import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.QuestionsUiState
+import com.raagava.android.interview.apps.marrowquiz.presentation.screens.module_list.ModuleListUiState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -37,18 +37,18 @@ fun SplashScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when (loadState) {
-            is QuestionsUiState.Success -> {
+            is ModuleListUiState.Success -> {
                 LaunchedEffect(Unit) {
-                    navController.navigate(Screens.QuizScreen) {
+                    navController.navigate(Screens.ModuleListScreen) {
                         popUpTo(Screens.SplashScreen) { inclusive = true }
                     }
                 }
             }
 
-            is QuestionsUiState.Error -> {
+            is ModuleListUiState.Error -> {
                 ErrorView(
                     title = "Couldn't load questions",
-                    description = (loadState as QuestionsUiState.Error).message
+                    description = (loadState as ModuleListUiState.Error).message
                 ) {
                     Button(onClick = { viewModel.getQuestions() }) {
                         Text("Retry")
@@ -56,7 +56,7 @@ fun SplashScreen(
                 }
             }
 
-            QuestionsUiState.Loading -> {
+            ModuleListUiState.Loading -> {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(

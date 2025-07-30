@@ -38,7 +38,7 @@ class QuizViewModel(
         private set
 
     init {
-        getQuestions()
+//        getQuestions()
     }
 
     fun registerAnswer(questionId: Int, optionIndex: Int) {
@@ -68,9 +68,9 @@ class QuizViewModel(
         _currQuestionIndex.value = curr
     }
 
-    fun getQuestions() {
+    fun getQuestions(moduleId: String) {
         viewModelScope.launch {
-            getQuestionsUseCase().collect { resp ->
+            getQuestionsUseCase(moduleId).collect { resp ->
                 when (resp) {
                     DataResponse.Loading -> {
                         _questionsState.value = QuestionsUiState.Loading

@@ -47,7 +47,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun QuizScreen(
-    navController: NavController, viewModel: QuizViewModel = koinViewModel()
+    moduleId: String,
+    navController: NavController,
+    viewModel: QuizViewModel = koinViewModel()
 ) {
 
     val questionsState by viewModel.questionsState.collectAsState()
@@ -59,6 +61,10 @@ fun QuizScreen(
 
     val coroutineScope = rememberCoroutineScope()
     var isDelayScrollActive = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.getQuestions(moduleId)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -78,7 +84,7 @@ fun QuizScreen(
                     title = "Couldn't load questions",
                     description = qState.message,
                     actionButton = {
-                        Button(onClick = { viewModel.getQuestions() }) {
+                        Button(onClick = { viewModel.getQuestions(moduleId) }) {
                             Text(text = "Retry")
                         }
                     }
@@ -95,7 +101,7 @@ fun QuizScreen(
                         title = "Couldn't load questions",
                         description = "There are no questions available at the moment",
                         actionButton = {
-                            Button(onClick = { viewModel.getQuestions() }) {
+                            Button(onClick = { viewModel.getQuestions(moduleId) }) {
                                 Text(text = "Retry")
                             }
                         }
@@ -229,6 +235,7 @@ fun QuizScreen(
 @Composable
 fun QuestionsScreenPreview() {
     QuizScreen(
-        navController = NavController(LocalContext.current)
+        navController = NavController(LocalContext.current),
+        moduleId = "test"
     )
 }
