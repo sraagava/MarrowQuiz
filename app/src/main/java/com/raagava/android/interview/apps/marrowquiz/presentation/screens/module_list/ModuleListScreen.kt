@@ -66,7 +66,8 @@ fun ModuleListScreen(
                                 onClick = { moduleId ->
                                     navController.navigate(
                                         Screens.QuizScreen(
-                                            moduleId = moduleId
+                                            moduleId = moduleId,
+                                            isReview = currState.list[it].pastAttempt != null
                                         )
                                     )
                                 }

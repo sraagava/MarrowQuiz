@@ -11,6 +11,7 @@ sealed class Screens {
     @Serializable
     data class QuizScreen(
         val moduleId: String,
+        val isReview: Boolean,
     ) : Screens()
 
     @Serializable

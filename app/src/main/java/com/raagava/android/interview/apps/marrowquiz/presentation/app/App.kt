@@ -38,7 +38,11 @@ fun App(
             }
             composable<Screens.QuizScreen> {
                 val args = it.toRoute<Screens.QuizScreen>()
-                QuizScreen(navController = navController, moduleId = args.moduleId)
+                QuizScreen(
+                    navController = navController,
+                    moduleId = args.moduleId,
+                    isReview = args.isReview
+                )
             }
             composable<Screens.ResultScreen> {
                 val args = it.toRoute<Screens.ResultScreen>()

@@ -55,6 +55,8 @@ class QuizViewModel(
             }
         }
 
+        _questionsState.value = QuestionsUiState.Success(updatedQuestions)
+
         val question = updatedQuestions.find { it.id == questionId }
 
         //Update Streak

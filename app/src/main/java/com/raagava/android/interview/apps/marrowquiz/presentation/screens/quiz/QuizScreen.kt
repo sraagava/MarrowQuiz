@@ -41,13 +41,13 @@ import com.raagava.android.interview.apps.marrowquiz.presentation.components.Top
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.QuestionsUiState
 import com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz.states.ResultUiState
 import com.raagava.android.interview.apps.marrowquiz.ui.theme.CorrectColor
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun QuizScreen(
     moduleId: String,
+    isReview: Boolean,
     navController: NavController,
     viewModel: QuizViewModel = koinViewModel()
 ) {
@@ -146,11 +146,13 @@ fun QuizScreen(
                                     if (index + 1 >= qState.questions.size) {
                                         // Submit can be manually done by the user
                                     } else {
+
                                         coroutineScope.launch {
-                                            isDelayScrollActive.value = true
-                                            delay(2000L)
                                             pager.animateScrollToPage(index + 1)
-                                            isDelayScrollActive.value = false
+//                                            isDelayScrollActive.value = true
+//                                            delay(2000L)
+//
+//                                            isDelayScrollActive.value = false
                                         }
 
                                     }
@@ -177,7 +179,11 @@ fun QuizScreen(
                         if (!isDelayScrollActive.value) {
                             val ctaText = when {
                                 //Last question
-                                (currIndex + 1 >= qState.questions.size) -> "Submit"
+                                (currIndex + 1 >= qState.questions.size) -> if (isReview) {
+                                    "Finish Review"
+                                } else {
+                                    "Submit"
+                                }
 
                                 //If not answered
 //                                userAnswers.getOrDefault(
@@ -232,6 +238,7 @@ fun QuizScreen(
 fun QuestionsScreenPreview() {
     QuizScreen(
         navController = NavController(LocalContext.current),
-        moduleId = "test"
+        moduleId = "test",
+        isReview = true
     )
 }
