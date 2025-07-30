@@ -27,8 +27,8 @@ class QuizViewModel(
     private val _currQuestionIndex: MutableStateFlow<Int> = MutableStateFlow(0)
     val currQuestionIndex: StateFlow<Int> = _currQuestionIndex
 
-    private val _userAnswers: MutableStateFlow<Map<Int, Int>> = MutableStateFlow(mapOf())
-    val userAnswers: StateFlow<Map<Int, Int>> = _userAnswers
+//    private val _userAnswers: MutableStateFlow<Map<Int, Int>> = MutableStateFlow(mapOf())
+//    val userAnswers: StateFlow<Map<Int, Int>> = _userAnswers
 
     private var maxQuestions: Int = 0
 
@@ -41,21 +41,24 @@ class QuizViewModel(
     var maxStreak: Int = 0
         private set
 
-    init {
-//        getQuestions()
-    }
-
     fun registerAnswer(questionId: Int, optionIndex: Int) {
-        val question = (questionsState.value as? QuestionsUiState.Success)
-            ?.questions
-            ?.find { it.id == questionId } ?: return
+        val questions = (questionsState.value as? QuestionsUiState.Success)
+            ?.questions ?: return
 
-        _userAnswers.value = userAnswers.value.toMutableMap().apply {
-            put(questionId, optionIndex)
+        val updatedQuestions = questions.map {
+            if (it.id == questionId) {
+                it.copy(
+                    userAnswerIndex = optionIndex
+                )
+            } else {
+                it
+            }
         }
 
+        val question = updatedQuestions.find { it.id == questionId }
+
         //Update Streak
-        val isCorrect = question.correctOptionIndex == optionIndex
+        val isCorrect = question?.correctOptionIndex == optionIndex
         if (isCorrect) {
             _streakState.value += 1
 
@@ -96,25 +99,16 @@ class QuizViewModel(
     fun submitQuiz(moduleId: String) {
         viewModelScope.launch {
             val qState = questionsState.value
-            val aState = userAnswers.value
 
             if (qState !is QuestionsUiState.Success) return@launch
 
             val result = evaluateAnswersUseCase.invoke(
                 questions = qState.questions,
-                answers = userAnswers.value
             )
-
-            val uAnsList = mutableListOf<Int?>()
-            for (i in 0 until qState.questions.size) {
-                val q = qState.questions[i]
-                val ans = aState[q.id]
-                uAnsList.add(ans)
-            }
 
             storeQuizAttemptUseCase.invoke(
                 moduleId = moduleId,
-                answers = uAnsList,
+                questions = qState.questions,
                 total = result.total,
                 correct = result.correct
             )

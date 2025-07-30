@@ -1,5 +1,6 @@
 package com.raagava.android.interview.apps.marrowquiz.domain.use_case.store_quiz_attempt
 
+import com.raagava.android.interview.apps.marrowquiz.domain.models.Question
 import com.raagava.android.interview.apps.marrowquiz.domain.repository.QuizRepository
 
 class StoreQuizAttemptUseCase(
@@ -8,13 +9,13 @@ class StoreQuizAttemptUseCase(
 
     suspend operator fun invoke(
         moduleId: String,
-        answers: List<Int?>,
+        questions: List<Question>,
         total: Int,
         correct: Int
     ) {
         repository.storeUserQuizAttempt(
             moduleId,
-            answers,
+            questions,
             total,
             correct
         )

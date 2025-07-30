@@ -30,7 +30,6 @@ import com.raagava.android.interview.apps.marrowquiz.ui.theme.IncorrectOptionBg
 @Composable
 fun QuestionSection(
     question: Question,
-    selectedOption: Int?,
     onOptionSelected: (Int) -> Unit
 ) {
     Column(
@@ -46,9 +45,9 @@ fun QuestionSection(
         question.options.forEachIndexed { index, option ->
             OptionButton(
                 text = option,
-                isSelected = selectedOption == index,
-                isAnswer = if (selectedOption == null) false else (index == question.correctOptionIndex),
-                enabled = selectedOption == null,
+                isSelected = question.userAnswerIndex == index,
+                isAnswer = if (question.userAnswerIndex == null) false else (index == question.correctOptionIndex),
+                enabled = question.userAnswerIndex == null,
                 onClick = { onOptionSelected(index) },
             )
         }
@@ -125,7 +124,6 @@ fun QuestionSectionPreview() {
             correctOptionIndex = 0,
             id = 1,
         ),
-        selectedOption = null,
         onOptionSelected = {}
     )
 }

@@ -54,7 +54,6 @@ fun QuizScreen(
 
     val questionsState by viewModel.questionsState.collectAsState()
     val currIndex by viewModel.currQuestionIndex.collectAsState()
-    val userAnswers by viewModel.userAnswers.collectAsState()
     val streak by viewModel.streakState.collectAsState()
 
     val resultState = viewModel.resultState.collectAsState()
@@ -139,11 +138,8 @@ fun QuizScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            val selectedOption =
-                                userAnswers.getOrDefault(qState.questions[index].id, null)
                             QuestionSection(
                                 question = qState.questions[index],
-                                selectedOption = selectedOption,
                                 onOptionSelected = {
                                     viewModel.registerAnswer(qState.questions[index].id, it)
 
@@ -184,10 +180,10 @@ fun QuizScreen(
                                 (currIndex + 1 >= qState.questions.size) -> "Submit"
 
                                 //If not answered
-                                userAnswers.getOrDefault(
-                                    qState.questions[currIndex].id,
-                                    null
-                                ) == null -> "Skip"
+//                                userAnswers.getOrDefault(
+//                                    qState.questions[currIndex].id,
+//                                    null
+//                                ) == null -> "Skip"
 
                                 else -> "Next"
                             }

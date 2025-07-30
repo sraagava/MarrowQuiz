@@ -5,7 +5,7 @@ import com.raagava.android.interview.apps.marrowquiz.domain.models.QuizResult
 
 class EvaluateAnswersUseCase {
 
-    operator fun invoke(questions: List<Question>, answers: Map<Int, Int>): QuizResult {
+    operator fun invoke(questions: List<Question>): QuizResult {
         var correct = 0
         var incorrect = 0
         var skipped = 0
@@ -14,7 +14,7 @@ class EvaluateAnswersUseCase {
         var minStreak = 0
 
         questions.forEach { question ->
-            val answer = answers.getOrDefault(question.id, null)
+            val answer = question.userAnswerIndex
             if (answer == null) {
                 skipped++
                 minStreak = 0

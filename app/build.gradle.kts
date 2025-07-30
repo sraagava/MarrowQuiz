@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "1.9.10"
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -79,4 +80,9 @@ dependencies {
     //Debug tool
     debugImplementation(libs.chucker.library)
     releaseImplementation(libs.chucker.library.no.op)
+
+    //Room DB
+    implementation("androidx.room:room-runtime:2.7.2")
+    implementation("androidx.room:room-ktx:2.7.2")
+    ksp("androidx.room:room-compiler:2.7.2")
 }

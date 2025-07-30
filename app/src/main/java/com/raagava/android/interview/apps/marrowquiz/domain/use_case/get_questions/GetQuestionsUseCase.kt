@@ -22,11 +22,11 @@ class GetQuestionsUseCase(
             val qList = mutableListOf<Question>()
 
             val previousAnswers = repository.getPastUserAnswers(moduleId)
-            if (!previousAnswers.isNullOrEmpty()) {
-                response.data.forEachIndexed { ind, item ->
+            if (previousAnswers.isNotEmpty()) {
+                response.data.forEach { item ->
                     qList.add(
                         item.copy(
-                            userAnswerIndex = previousAnswers[ind]
+                            userAnswerIndex = previousAnswers[item.id]
                         )
                     )
                 }

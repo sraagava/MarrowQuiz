@@ -2,18 +2,24 @@ package com.raagava.android.interview.apps.marrowquiz.data.local
 
 import com.raagava.android.interview.apps.marrowquiz.data.models.PastModuleAttempt
 import com.raagava.android.interview.apps.marrowquiz.data.models.QuestionDto
+import com.raagava.android.interview.apps.marrowquiz.data.models.QuizAttemptEntity
 import com.raagava.android.interview.apps.marrowquiz.data.models.QuizModuleDto
+import com.raagava.android.interview.apps.marrowquiz.data.models.QuizUserAnswerEntity
+import com.raagava.android.interview.apps.marrowquiz.domain.models.Question
 
-class QuestionsCache {
+class QuestionsCache(
+    private val quizDB: QuizDatabase
+) {
 
     //    private val questions: MutableList<QuestionDto> = mutableListOf()
+
     private val modulesData: MutableList<QuizModuleDto> = mutableListOf()
     private val questionsData: HashMap<String, List<QuestionDto>> = HashMap()
 
-    private val pastAttempts: HashMap<String, PastModuleAttempt> =
-        HashMap<String, PastModuleAttempt>()
-
-    private val quizUserAnswers: HashMap<String, List<Int?>> = HashMap()
+//    private val pastAttempts: HashMap<String, PastModuleAttempt> =
+//        HashMap<String, PastModuleAttempt>()
+//
+//    private val quizUserAnswers: HashMap<String, List<Int?>> = HashMap()
 
     fun setModules(newModules: List<QuizModuleDto>) {
         modulesData.clear()
@@ -32,30 +38,56 @@ class QuestionsCache {
         return questionsData[moduleId]
     }
 
-    fun storeAttempt(
+    suspend fun storeAttempt(
         moduleId: String,
-        answers: List<Int?>,
+        questions: List<Question>,
         total: Int,
         correct: Int
     ) {
-        pastAttempts.put(
-            moduleId, PastModuleAttempt(
+        quizDB.attemptsDao().insert(
+            QuizAttemptEntity(
+                moduleId = moduleId,
                 totalQuestion = total,
                 correct = correct
             )
         )
-        setQuizUserAnswers(moduleId, answers)
+        questions.filter {
+            it.userAnswerIndex != null
+        }.map { q ->
+            QuizUserAnswerEntity(
+                moduleId = moduleId,
+                questionId = q.id,
+                answerIndex = q.userAnswerIndex!!
+            )
+        }.forEach {
+            quizDB.answersDao().insert(it)
+        }
+//        setQuizUserAnswers(moduleId, answers)
     }
 
-    fun getPastAttempts(): HashMap<String, PastModuleAttempt> {
-        return pastAttempts
+    suspend fun getPastAttempts(): HashMap<String, PastModuleAttempt> {
+        val map = HashMap<String, PastModuleAttempt>()
+        quizDB.attemptsDao().getAll().forEach {
+            map.put(
+                it.moduleId,
+                PastModuleAttempt(
+                    it.totalQuestion,
+                    it.correct
+                )
+            )
+        }
+        return map
     }
 
-    fun setQuizUserAnswers(moduleId: String, answers: List<Int?>) {
-        quizUserAnswers.put(moduleId, answers)
-    }
+    suspend fun getQuizUserAnswers(moduleId: String): Map<Int, Int?> {
+        val map = HashMap<Int, Int?>()
+        quizDB.answersDao().getAnswers(moduleId)?.map {
+            map.put(
+                it.questionId,
+                it.answerIndex
+            )
+        }
 
-    fun getQuizUserAnswers(moduleId: String): List<Int?>? {
-        return quizUserAnswers[moduleId]
+        return map
     }
 }

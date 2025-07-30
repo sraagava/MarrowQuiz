@@ -5,6 +5,7 @@ import com.raagava.android.interview.apps.marrowquiz.data.models.PastModuleAttem
 import com.raagava.android.interview.apps.marrowquiz.data.models.QuestionDto
 import com.raagava.android.interview.apps.marrowquiz.data.models.QuizModuleDto
 import com.raagava.android.interview.apps.marrowquiz.data.remote.QuizApi
+import com.raagava.android.interview.apps.marrowquiz.domain.models.Question
 import com.raagava.android.interview.apps.marrowquiz.domain.repository.QuizRepository
 
 class QuizRepositoryImpl(
@@ -44,13 +45,13 @@ class QuizRepositoryImpl(
 
     override suspend fun storeUserQuizAttempt(
         moduleId: String,
-        answers: List<Int?>,
+        questions: List<Question>,
         total: Int,
         correct: Int
     ) {
         cache.storeAttempt(
             moduleId,
-            answers,
+            questions,
             total,
             correct
         )
@@ -60,7 +61,7 @@ class QuizRepositoryImpl(
         return cache.getPastAttempts()
     }
 
-    override suspend fun getPastUserAnswers(moduleId: String): List<Int?>? {
+    override suspend fun getPastUserAnswers(moduleId: String): Map<Int, Int?> {
         return cache.getQuizUserAnswers(moduleId)
     }
 }

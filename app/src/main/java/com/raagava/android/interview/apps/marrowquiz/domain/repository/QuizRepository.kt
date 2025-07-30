@@ -3,6 +3,7 @@ package com.raagava.android.interview.apps.marrowquiz.domain.repository
 import com.raagava.android.interview.apps.marrowquiz.data.models.PastModuleAttempt
 import com.raagava.android.interview.apps.marrowquiz.data.models.QuestionDto
 import com.raagava.android.interview.apps.marrowquiz.data.models.QuizModuleDto
+import com.raagava.android.interview.apps.marrowquiz.domain.models.Question
 
 interface QuizRepository {
 
@@ -11,11 +12,11 @@ interface QuizRepository {
 
     suspend fun storeUserQuizAttempt(
         moduleId: String,
-        answers: List<Int?>,
+        questions: List<Question>,
         total: Int,
         correct: Int
     )
 
     suspend fun getPastAttempts(): Map<String, PastModuleAttempt>
-    suspend fun getPastUserAnswers(moduleId: String): List<Int?>?
+    suspend fun getPastUserAnswers(moduleId: String): Map<Int, Int?>
 }

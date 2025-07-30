@@ -1,6 +1,8 @@
 package com.raagava.android.interview.apps.marrowquiz.di
 
+import androidx.room.Room
 import com.raagava.android.interview.apps.marrowquiz.data.local.QuestionsCache
+import com.raagava.android.interview.apps.marrowquiz.data.local.QuizDatabase
 import com.raagava.android.interview.apps.marrowquiz.data.remote.ApiProvider
 import com.raagava.android.interview.apps.marrowquiz.data.remote.QuizApi
 import com.raagava.android.interview.apps.marrowquiz.data.repository.QuizRepositoryImpl
@@ -26,9 +28,15 @@ val dataModules = module {
         get<Retrofit>().create<QuizApi>(QuizApi::class.java)
     }
 
+    single<QuizDatabase> {
+        Room.databaseBuilder(
+            get(),
+            QuizDatabase::class.java, "quiz_database"
+        ).build()
+    }
     //Local
     single {
-        QuestionsCache()
+        QuestionsCache(get())
     }
 
     //Repositories
