@@ -3,6 +3,7 @@ package com.raagava.android.interview.apps.marrowquiz.data.local
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.raagava.android.interview.apps.marrowquiz.data.models.QuizAttemptEntity
 import com.raagava.android.interview.apps.marrowquiz.data.models.QuizUserAnswerEntity
@@ -16,7 +17,7 @@ interface QuizAnswersDao {
     @Query("SELECT * FROM quiz_user_answers WHERE module_id = :moduleId")
     suspend fun getAnswers(moduleId: String): List<QuizUserAnswerEntity>?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg quizAnswer: QuizUserAnswerEntity)
 
     @Delete
