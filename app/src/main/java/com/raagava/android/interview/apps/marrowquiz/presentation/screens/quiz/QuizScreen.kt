@@ -70,7 +70,14 @@ fun QuizScreen(
     ) {
 
         Box(modifier = Modifier.fillMaxWidth()) {
-            TopBar(title = "Quiz")
+            TopBar(
+                title =
+                    if (isReview) {
+                        "Quiz Review"
+                    } else {
+                        "Quiz"
+                    }
+            )
             Streak(
                 modifier = Modifier.align(Alignment.CenterEnd),
                 streak = streak
