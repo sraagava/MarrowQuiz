@@ -40,8 +40,18 @@ class QuizRepositoryImpl(
         }
     }
 
-    override suspend fun storeAttempt(moduleId: String, attempt: PastModuleAttempt) {
-        cache.storeAttempt(moduleId, attempt)
+    override suspend fun storeUserQuizAttempt(
+        moduleId: String,
+        answers: List<Int?>,
+        total: Int,
+        correct: Int
+    ) {
+        cache.storeAttempt(
+            moduleId,
+            answers,
+            total,
+            correct
+        )
     }
 
     override suspend fun getPastAttempts(): Map<String, PastModuleAttempt> {

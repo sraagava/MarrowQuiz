@@ -32,8 +32,19 @@ class QuestionsCache {
         return questionsData[moduleId]
     }
 
-    fun storeAttempt(moduleId: String, attempt: PastModuleAttempt) {
-        pastAttempts.put(moduleId, attempt)
+    fun storeAttempt(
+        moduleId: String,
+        answers: List<Int?>,
+        total: Int,
+        correct: Int
+    ) {
+        pastAttempts.put(
+            moduleId, PastModuleAttempt(
+                totalQuestion = total,
+                correct = correct
+            )
+        )
+        setQuizUserAnswers(moduleId, answers)
     }
 
     fun getPastAttempts(): HashMap<String, PastModuleAttempt> {

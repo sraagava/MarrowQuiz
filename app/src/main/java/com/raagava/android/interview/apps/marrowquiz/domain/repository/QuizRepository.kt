@@ -9,8 +9,13 @@ interface QuizRepository {
     suspend fun getQuizQuestions(moduleId: String): List<QuestionDto>
     suspend fun getQuizModules(): List<QuizModuleDto>
 
-    suspend fun storeAttempt(moduleId: String, attempt: PastModuleAttempt)
-    suspend fun getPastAttempts(): Map<String, PastModuleAttempt>
+    suspend fun storeUserQuizAttempt(
+        moduleId: String,
+        answers: List<Int?>,
+        total: Int,
+        correct: Int
+    )
 
+    suspend fun getPastAttempts(): Map<String, PastModuleAttempt>
     suspend fun getPastUserAnswers(moduleId: String): List<Int?>?
 }
