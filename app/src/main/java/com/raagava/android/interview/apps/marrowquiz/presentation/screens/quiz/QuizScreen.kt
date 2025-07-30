@@ -166,6 +166,10 @@ fun QuizScreen(
                             .padding(horizontal = 24.dp, vertical = 24.dp),
                         onClick = {
                             if (pager.currentPage + 1 >= qState.questions.size) {
+                                if (isReview) {
+                                    navController.popBackStack()
+                                    return@Button
+                                }
                                 //Submitting the quiz for evaluation
                                 viewModel.submitQuiz(moduleId)
                             } else {
