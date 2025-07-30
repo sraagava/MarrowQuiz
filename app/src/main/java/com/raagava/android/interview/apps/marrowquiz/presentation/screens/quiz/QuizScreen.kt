@@ -1,5 +1,7 @@
 package com.raagava.android.interview.apps.marrowquiz.presentation.screens.quiz
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,12 +28,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.raagava.android.interview.apps.marrowquiz.R
 import com.raagava.android.interview.apps.marrowquiz.presentation.app.Screens
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.ErrorView
 import com.raagava.android.interview.apps.marrowquiz.presentation.components.LoaderDialog
@@ -70,6 +75,19 @@ fun QuizScreen(
     ) {
 
         Box(modifier = Modifier.fillMaxWidth()) {
+            if (isReview) {
+                Image(
+                    painter = painterResource(R.drawable.ic_back),
+                    contentDescription = "Back button",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
+                    modifier = Modifier
+                        .size(36.dp)
+                        .padding(6.dp)
+                        .clickable(true) {
+                            navController.popBackStack()
+                        }
+                )
+            }
             TopBar(
                 title =
                     if (isReview) {
